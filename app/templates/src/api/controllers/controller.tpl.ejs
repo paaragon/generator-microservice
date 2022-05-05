@@ -1,0 +1,16 @@
+import { NextFunction, Request, Response } from 'express';
+import HttpException from '../exceptions/HttpException';
+
+export default {
+  <% for (const path of controller) { %>
+  async <%= path.functionName %>(req: Request, res: Response, next: NextFunction) {
+    try {
+
+      return res.json({error: false, msg: 'ok'});
+
+    } catch (e) {
+      next(e);
+    }
+  },
+  <% } %>
+}

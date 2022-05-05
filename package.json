@@ -1,0 +1,27 @@
+{
+  "name": "generator-microservice",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "swagger": "node ./test-swagger.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/paaragon/generator-microservice.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/paaragon/generator-microservice/issues"
+  },
+  "homepage": "https://github.com/paaragon/generator-microservice#readme",
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.0.3",
+    "yeoman-generator": "^5.6.1"
+  },
+  "files": [
+    "app"
+  ]
+}

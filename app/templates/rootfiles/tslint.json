@@ -1,0 +1,19 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended"
+    ],
+    "jsRules": {},
+    "rules": {
+        "ban-types": [
+            "error",
+            {
+                "types": {
+                    "Function": false
+                },
+                "extendDefaults": true
+            }
+        ]
+    },
+    "rulesDirectory": []
+}
