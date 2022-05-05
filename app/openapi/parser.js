@@ -31,7 +31,6 @@ function toExpressEndpoint(endpoint, controller) {
     let endpointPath = endpoint.replace(/{(.*)}/g, ':$1');
     const regex = new RegExp(`^\/${controller}`);
     endpointPath = endpointPath.replace(regex, '');
-    console.log(endpointPath, controller);
     if (endpointPath === '') {
         endpointPath = '/';
     }

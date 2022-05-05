@@ -1,7 +1,9 @@
 'use strict';
 const Generator = require('yeoman-generator');
 const openapiParser = require('./openapi/parser');
-const fs = require('fs');
+const { generateApi } = require('swagger-typescript-api');
+const path = require("path");
+const fs = require("fs");
 
 module.exports = class extends Generator {
     constructor(args, opts) {
@@ -130,6 +132,18 @@ module.exports = class extends Generator {
             this.destinationPath(`src/api/server.ts`),
             { controllers: controllers },
         );
-    }
 
+        // api scheme
+        generateApi({
+            name: "schema.ts",
+            output: this.destinationPath(`src/api/schema`),
+            input: path.resolve(process.cwd(), answers.openapiPath),
+            generateClient: false,
+            generateRouteTypes: true,
+            generateResponses: true,
+            extractRequestBody: true,
+            extractRequestParams: true,
+            modular: true,
+        });
+    }
 };

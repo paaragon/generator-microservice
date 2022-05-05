@@ -2,9 +2,9 @@ import config from 'config';
 import dotenv from 'dotenv';
 import 'reflect-metadata';
 import Server from './api/server';
+import { ConfigApiI } from './config';
 import { logger } from './logger/logger';
-import { ConfigApiI } from './models/ConfigI';
-<% if (database) { %>import dbconnection from './infraestructure/db-connector';<% } %>
+<% if (database) { %>import dbConnector from './infrastructure/db-connector';<% } %>
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ log.info('Starting app...');
     const port = normalizePort(process.env.PORT, config.get<ConfigApiI>('api').port);
     <% if (database) { %>
     log.info('Connecting database...');
-    await dbconnection.createConnection();
+    await dbConnector.createConnection();
     log.info('Database connected');
     <% } %>
     log.info('Starting server...');
