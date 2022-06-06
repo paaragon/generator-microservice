@@ -17,9 +17,9 @@ function transform(api) {
         for (const method of methods) {
             const methodInfo = api.paths[endpoint][method];
             const functionName = getFunctionName(endpoint, method, methodInfo);
-            const controller = methodInfo.tags && methodInfo.tags.length > 0 ? methodInfo.tags[0] : 'root';
+            const controller = getControllerName(methodInfo);
             const endpointPath = toExpressEndpoint(endpoint, controller);
-            const path = { endpoint: endpointPath, method, controller, functionName };
+            const path = { endpoint: endpointPath, method, controller, functionName, functionNameCapitalized: functionName.replace(/./, c => c.toUpperCase()) };
             paths.push(path);
         }
     }
@@ -35,6 +35,10 @@ function toExpressEndpoint(endpoint, controller) {
         endpointPath = '/';
     }
     return endpointPath
+}
+
+function getControllerName(methodInfo) {
+    return methodInfo.tags && methodInfo.tags.length > 0 ? methodInfo.tags[0] : 'root';
 }
 
 function getFunctionName(endpoint, method, methodInfo) {

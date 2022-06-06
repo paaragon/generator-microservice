@@ -4,10 +4,11 @@ import express from 'express';
 import httpContext from 'express-http-context';
 import customExpress, { CustomExpress } from '../lib/customExpress/customExpress';
 import { logger } from '../logger/logger';
-import { ConfigApiI } from '../models/ConfigI';
+import { ConfigApiI } from '../config';
 import accessLogger from './mdw/accessLogger';
 import errorHandler from './mdw/errorHandler';
 import requestUuid from './mdw/requestUuid';
+import healthRoutes from './routes/health.routes';
 <% for (const ctrlName of Object.keys(controllers)) { %>import <%= ctrlName %>Routes from './routes/<%= ctrlName %>.routes';
 <% } %>
 
@@ -39,7 +40,7 @@ export default class Server {
     private initRoutes() {
         this.app.use(`/health`, healthRoutes);
         <% for (const ctrlName of Object.keys(controllers)) { %>
-        this.app.use(`/api/v${config.get<ConfigApiI>('api').version}/<%= ctrlName %>`, <%= ctrlName %>Routes);<% } %>
+        this.app.use(`/api/v${config.get<ConfigApiI>('api').version}<%= ctrlName === 'root' ? '' : '/' + ctrlName %>`, <%= ctrlName %>Routes);<% } %>
     }
 
     async start() {

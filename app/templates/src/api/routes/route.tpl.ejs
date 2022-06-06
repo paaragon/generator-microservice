@@ -1,12 +1,14 @@
 import customExpress from '../../lib/customExpress/customExpress';
 import authCheck from '../mdw/authCheck';
 import validateRequest from '../mdw/validateRequest';
-import <%= name %>Ctrl from '../controllers/<%= name %>.ctrl';
+import <%= nameCapitalized %>Ctrl from '../controllers/<%= name %>.ctrl';
 
 const app = customExpress();
 
+const controller = new <%= nameCapitalized %>Ctrl();
+
 <% for (const path of controller) { %>
-app.<%= path.method %>('<%= path.endpoint %>', authCheck, [], validateRequest, <%= name %>Ctrl.<%= path.functionName %>);
+app.<%= path.method %>('<%= path.endpoint %>', authCheck, [], validateRequest, controller.<%= path.functionName %>);
 <% } %>
 
 export default app;

@@ -21,7 +21,7 @@ module.exports = class extends Generator {
                 {
                     type: 'input',
                     name: 'openapiPath',
-                    default: 'swagger.yml',
+                    default: 'None',
                     message: 'Enter path for openapi file (json or yaml): '
                 },
                 {
@@ -30,21 +30,30 @@ module.exports = class extends Generator {
                     message: 'Select database support: ',
                     choices: [
                         {
+                            name: 'None',
+                            value: null
+                        },
+                        {
                             name: 'SQLite',
                             value: 'sqlite',
-                        }, {
+                        },
+                        {
                             name: 'Oracle',
                             value: 'oracle'
 
-                        }, {
+                        },
+                        {
                             name: 'PostgreSQL',
                             value: 'postgresql'
-                        }, {
-                            name: 'None',
-                            value: null
-                        }
-                    ]
-                }
+                        },
+                    ],
+                },
+                {
+                    type: 'port',
+                    name: 'port',
+                    default: '3000',
+                    message: 'Enter a port for the server'
+                },
             ],
         );
 
@@ -56,9 +65,16 @@ module.exports = class extends Generator {
             this.destinationPath(this.destinationRoot()),
         );
 
+        // config folder
         this.fs.copy(
-            this.templatePath('rootfiles/.*'),
-            this.destinationPath(this.destinationRoot()),
+            this.templatePath('rootfiles/config/development.json'),
+            this.destinationPath(`${this.destinationRoot()}/config/development.json`),
+        );
+
+        this.fs.copyTpl(
+            this.templatePath('rootfiles/config/default.tpl.ejs'),
+            this.destinationPath(`${this.destinationRoot()}/config/default.json`),
+            {port: answers.port}
         );
 
         // src static files
@@ -104,8 +120,24 @@ module.exports = class extends Generator {
             this.destinationPath('src/api/mdw'),
         );
 
+        this.fs.copy(
+            this.templatePath('src/api/model'),
+            this.destinationPath('src/api/model'),
+        );
+
+        this.fs.copy(
+            this.templatePath('src/api/controllers/health.ctrl.ts'),
+            this.destinationPath('src/api/controllers/health.ctrl.ts'),
+        );
+
+        this.fs.copy(
+            this.templatePath('src/api/routes/health.routes.ts'),
+            this.destinationPath('src/api/routes/health.routes.ts'),
+        );
+
+        const openapiPath = answers.openapiPath !== 'None' ? answers.openapiPath : `${__dirname}/openapi/default-openapi.json`;
         // api routes, controller and main server
-        const api = await openapiParser.parse(answers.openapiPath);
+        const api = await openapiParser.parse(openapiPath);
 
         const controllers = api.reduce((prev, curr) => {
             const ctrl = prev[curr.controller] || [];
@@ -118,13 +150,25 @@ module.exports = class extends Generator {
             this.fs.copyTpl(
                 this.templatePath('src/api/routes/route.tpl.ejs'),
                 this.destinationPath(`src/api/routes/${controller}.routes.ts`),
-                { controller: controllers[controller], name: controller },
+                { controller: controllers[controller], name: controller, nameCapitalized: controller.replace(/./, c => c.toUpperCase()) },
             );
             this.fs.copyTpl(
                 this.templatePath('src/api/controllers/controller.tpl.ejs'),
                 this.destinationPath(`src/api/controllers/${controller}.ctrl.ts`),
-                { controller: controllers[controller], name: controller },
+                { controller: controllers[controller], name: controller, nameCapitalized: controller.replace(/./, c => c.toUpperCase()) },
             );
+            for (const path of controllers[controller]) {
+                this.fs.copyTpl(
+                    this.templatePath('src/api/schema/request.tpl.ejs'),
+                    this.destinationPath(`src/api/schema/${path.functionNameCapitalized}Request.ts`),
+                    { path },
+                );
+                this.fs.copyTpl(
+                    this.templatePath('src/api/schema/response.tpl.ejs'),
+                    this.destinationPath(`src/api/schema/${path.functionNameCapitalized}Response.ts`),
+                    { path },
+                );
+            }
         }
 
         this.fs.copyTpl(

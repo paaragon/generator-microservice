@@ -1,16 +1,15 @@
-import { NextFunction, Request, Response } from 'express';
-import HttpException from '../exceptions/HttpException';
+import Controller from '../model/Controller';
+<% for (const path of controller) { %>
+import <%= path.functionNameCapitalized %>Request from '../schema/<%= path.functionNameCapitalized %>Request';
+import <%= path.functionNameCapitalized %>Response from '../schema/<%= path.functionNameCapitalized %>Response';
+<% } %>
 
-export default {
+export default class <%= nameCapitalized %>Controller extends Controller {
   <% for (const path of controller) { %>
-  async <%= path.functionName %>(req: Request, res: Response, next: NextFunction) {
-    try {
+  async <%= path.functionName %>(req: <%= path.functionNameCapitalized %>Request): Promise<<%= path.functionNameCapitalized %>Response> {
 
-      return res.json({error: false, msg: 'ok'});
-
-    } catch (e) {
-      next(e);
-    }
-  },
+    // TODO - implement here your logic
+    throw new Error('Method not implemented.');
+  }
   <% } %>
 }

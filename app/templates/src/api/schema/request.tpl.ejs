@@ -1,0 +1,34 @@
+import express from 'express';
+import Request from '../model/Request';
+
+export default class <%= path.functionNameCapitalized %>eRequest extends Request {
+
+    /**
+    TODO - write here your request model. For example:
+    body: {
+        name: string;
+        lastName: string;
+    };
+
+    headers: {
+        x-token: string;
+    };
+
+    query: {
+        page: string;
+    };
+
+    params: {
+        id: string;
+    }
+    */
+
+    constructor() {
+        super();
+    }
+
+    public validate(req: express.Request): boolean {
+        // TODO - write here your request validation
+        return true;
+    }
+}
